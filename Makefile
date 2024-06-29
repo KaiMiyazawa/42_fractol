@@ -1,25 +1,45 @@
-NAME = fractol
-INCDIR = include/
-SRC = fractol.c ft_atof.c hook.c main.c fractol_utils.c utils.c
-OBJ = ${SRC:.c=.o}
+NAME		= fractol
+#CC			= clang
+CC			= cc
+CFLAGS		= -O3 -Wall -Wextra -Werror -I.
+#CFLAGS		= -O3 -I.#os update...
+#CFLAGS += -g
+#CFLAGS += -fsanitize=address
+MLX			= libmlx.dylib
+MLXFLAG		= -framework OpenGL -framework AppKit
+MINILIB     = minilibx_mms_20200219
+#CFLAGS		= -Wall -Wextra -Werror -I./minilib_mms_20200219
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
+INCDIR = include/
+
+
+SRCS = fractol.c ft_atof.c hook.c main.c fractol_utils.c utils.c
+
+OBJS 	= $(SRCS:%.c=%.o)
+
+all: $(NAME)
 
 .c.o:
-	${CC} ${CFLAGS} -Imlx -o $@ -c $< -I ${INCDIR}
+	${CC} ${CFLAGS} -o $@ -c $< -I ${INCDIR} -I $(MINILIB)
 
-${NAME}: ${OBJ}
-	${CC} ${CFLAGS} $(OBJ) -L /usr/X11R6/lib -lmlx -lXext -lX11 -framework OpenGL -framework AppKit -o ${NAME}
+$(MLX) :
+	cd 	"$(PWD)/$(MINILIB)" && make
+	cd 	"$(PWD)/$(MINILIB)" && cp $(MLX) ../$(MLX)
 
-all: ${NAME}
+$(NAME) : $(OBJS) $(MLX)
+	$(CC) $(OBJS) $(MLX) $(MLXFLAG) -o $(NAME)
 
 clean:
-	rm -f ${OBJ}
+	rm -rf $(OBJS)
 
 fclean: clean
-	rm -f ${NAME}
+	$(MAKE) -C $(MINILIB) clean
+	rm -rf $(NAME)
 
-re: fclean ${NAME}
+re: fclean all
 
-.PHONY: all clean fclean re
+kill_mlx:
+	rm -rf $(MLX)
+	cd 	"$(PWD)/$(MINILIB)" && rm -f $(MLX)
+
+.PHONY: all clean fclean re kill_mlx
