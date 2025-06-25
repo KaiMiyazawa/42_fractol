@@ -14,9 +14,9 @@ graph TD
     A --> C[Julia集合]  
     A --> D[Burning Ship]
     
-    B --> B1[Z^2 + C の反復計算]
-    C --> C1[Z^2 + 定数 の反復計算]
-    D --> D1[abs(Z)^2 + C の反復計算]
+    B --> B1[Z*Z + C の反復計算]
+    C --> C1[Z*Z + 定数 の反復計算]
+    D --> D1[abs(Z)*abs(Z) + C の反復計算]
     
     B1 --> E[発散判定]
     C1 --> E
